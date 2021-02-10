@@ -12,254 +12,108 @@
 if (!defined('ABSPATH')) {
 	exit;
 } // Exit if accessed directly
+require(plugin_dir_path(__FILE__) . '../wc-orders-custom/OrderCustom.php');
+// require("./wc-orders-custom/OrderCustom.php");
+$order = new OrderCustom($order_id);
+$data = $order->getOrderData();
+$currentOrder = $order->getOrder();
+$example = $order->getOrder()->get_billing_address_1();
 
-$pdf_font = apply_filters('pdf_font_family', '"dejavu sans"');
+// codigo para logo
+$logo_url = get_option('ywraq_pdf_logo');
+$logo_attachment_id = apply_filters('yith_pdf_logo_id', get_option('ywraq_pdf_logo-yith-attachment-id'));
+if (!$logo_attachment_id && $logo_url) {
+	$logo_attachment_id = attachment_url_to_postid($logo_url);
+}
+
+$logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url;
+// fin de logo
 ?>
 <!DOCTYPE html>
 <html>
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<style type="text/css">
-		body {
-			color: #000;
-			font-family: <?php echo $pdf_font; ?>;
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+	<style type=" text/css">
+		html {
+			font-size: 10px;
 		}
 
-		.logo {
-			width: 100%;
-			float: left;
-			max-width: 300px;
+		p {
+			margin-top: 0;
+			margin-bottom: 0;
+
 		}
 
-		.right {
-			float: right;
-			width: 40%;
-			text-align: right;
+		.text-8 {
+			font-size: 8px !important;
 		}
-
-		.clear {
-			clear: both;
-		}
-
-		.admin_info {
-			font-size: 12px;
-		}
-
-		table {
-			border: 0;
-		}
-
-		table.quote-table {
-			border: 0;
-			font-size: 14px;
-		}
-
-		.small-title {
-			text-align: right;
-			font-weight: 600;
-			color: #4e4e4e;
-			padding-top: 5px;
-			padding-right: 5px;
-		}
-
-		.small-info p {
-			border-left: 2px solid #a8c6e4;
-			padding: 0 0 5px 5px;
-			margin-bottom: 20px;
-		}
-
-		.quote-table td {
-			border: 0;
-			border-bottom: 1px solid #eee;
-		}
-
-		.quote-table .with-border td {
-			border-bottom: 2px solid #eee;
-		}
-
-		.quote-table .with-border td {
-			border-top: 2px solid #eee;
-		}
-
-		.quote-table .quote-total td {
-			height: 100px;
-			vertical-align: middle;
-			font-size: 18px;
-			border-bottom: 0;
-		}
-
-		.quote-table small {
-			font-size: 13px;
-		}
-
-		.quote-table .last-col {
-			padding-right: 45px;
-		}
-
-		.quote-table .last-col.tot {
-			font-weight: 600;
-		}
-
-		.quote-table .tr-wb {
-			border-left: 1px solid #ccc;
-			border-right: 1px solid #ccc;
-		}
-
-		.pdf-button {
-			color: #a8c6e4;
-			text-decoration: none;
-		}
-
-		div.content {
-			padding-bottom: 100px;
-			border-bottom: 1px
-		}
-
-		.footer {
-			position: fixed;
-			bottom: 0;
-			text-align: center;
-			font-size: 70%
-		}
-
-		.footer {
-			width: 100%;
-			text-align: center;
-			position: fixed;
-			bottom: 0;
-		}
-
-		.pagenum:before {
-			content: counter(page);
-		}
-
-		<?php
-		$template = get_option('ywraq_pdf_template', 'table');
-
-		if ('div' === $template) :
-		?>
-
-		/* div template style */
-		.table-wrapper ul {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-		}
-
-		.table-wrapper * {
-			box-sizing: border-box;
-		}
-
-		.quote-table.raq-header {
-			border-bottom: 1px solid #ebebeb;
-			margin: 5px 0;
-		}
-
-		.quote-table.raq-header li,
-		.quote-table.raq-items .raq_item li,
-		.quote-table.raq-totals li {
-			float: left;
-			padding: 5px 0;
-		}
-
-		.fields-1 li {
-			width: 100%;
-		}
-
-		.fields-2 li {
-			width: 50%;
-		}
-
-		.fields-3 li {
-			width: 33%;
-		}
-
-		.fields-4 li {
-			width: 25%;
-		}
-
-		.fields-5 li {
-			width: 20%;
-		}
-
-		.quote-table.raq-items>li {
-			border-bottom: 1px solid #ebebeb;
-			padding: 5px 0;
-		}
-
-		.quote-table.raq-items>li.with-metas {
-			border: none;
-		}
-
-		.raq-totals .colspan0 {
-			width: 75%
-		}
-
-		.raq-totals .colspan1 {
-			width: 50%
-		}
-
-		.raq-totals .colspan2 {
-			width: 66%
-		}
-
-		.raq-totals .colspan3 {
-			width: 75%
-		}
-
-		.raq-totals .colspan4 {
-			width: 80%
-		}
-
-		.raq-totals .totals_label {
-			text-align: right;
-			padding-right: 10px !important;
-		}
-
-		.raq-totals {
-			border-bottom: 1px solid #ebebeb;
-		}
-
-		.raq-items .wc-item-meta li {
-			float: none !important;
-			width: 100%;
-		}
-
-		.wc-item-meta li p {
-			display: inline-block;
-			padding: 0 !important;
-			margin: 0;
-		}
-
-
-		<?php
-		endif;
-		?>
 	</style>
-	<?php
-
-	do_action('yith_ywraq_quote_template_head');
-	?>
 </head>
 
 <body>
-	<?php
-	do_action('yith_ywraq_quote_template_footer', $order_id);
-	?>
-
-	<?php
-	do_action('yith_ywraq_quote_template_header', $order_id);
-	?>
-	<div class="content">
-		<?php
-		do_action('yith_ywraq_quote_template_content', $order_id);
-		?>
+	<div>
+		<div class="p-2">
+			<img src="<?php echo esc_url($logo); ?>" class="rounded-lg" style="max-width: 150px;">
+			<div class="text-uppercase float-right">
+				<p class="border p-2 border-dark my-1"><b>Cotizacion:</b> <?= $order_id ?></p>
+				<p class="border p-2 border-dark my-1"><b>Fecha:</b> <?= $data["date_created"] ?></p>
+			</div>
+		</div>
 
 	</div>
-	<?php
-	do_action('yith_ywraq_quote_template_after_content', $order_id);
-	?>
+	<div class="my-2 border text-uppercase text-sm p-2  border-dark">
+		<p class=""><b>CLIENTE:</b> <?= $data["customer_id_cli"] ?> <?= $currentOrder->get_billing_first_name() ?></p>
+		<p class=""><b>DIRECCION:</b> <?= $currentOrder->get_billing_address_1() ?></p>
+		<p class=""><b>TELEFONO:</b> <?= $currentOrder->get_billing_phone() ?></p>
+		<p class=""><b>ATENCION:</b> <?= $data["customer_nombeje"] ?></p>
+	</div>
+	<table class="table table-bordered text-uppercase my-1 w-100">
+		<thead class="thead-light  text-center">
+			<tr>
+				<th class="text-8">ITEM</th>
+				<th class="text-8">CANT.</th>
+				<th class="text-8">CODIGO</th>
+				<th class="text-8" style="width: 25%;">DESCRIPCION</th>
+				<th class="text-8">UND.</th>
+				<th class="text-8">PZAS</th>
+				<th class="text-8">
+					PESO.PZA KG
+				</th>
+				<th class="text-8">P.LISTA USD</th>
+				<th class="text-8">VAL.VTA USD</th>
+				<th class="text-8">TOTAL USD</th>
+				<th class="text-8">PESO.TOT KG</th>
+			</tr>
+		</thead>
+		<tbody class="text-8">
+			<tr>
+				<td scope="row" class="text-8 text-center">0010</td>
+				<td class="text-8 text-center">336.000</td>
+				<td class="text-8 text-center">403036</td>
+				<td class="text-8 text-left">PERFIL PARANTE 64 X 38 X 0.45 X 3 GALV</td>
+				<td class="text-8 text-center">PAQ</td>
+				<td class="text-8 text-right">2,688</td>
+				<td class="text-8 text-right">12.63</td>
+				<td class="text-8 text-right">2.49</td>
+				<td class="text-8 text-right">1.57</td>
+				<td class="text-8 text-right">4,216.66</td>
+				<td class="text-8 text-right">4,244.35</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="p-2 my-2">
+		<h6 class="text-bold">Observaciones</h6>
+		<div class="text-uppercase float-right">
+			<p class="border p-2 border-dark my-1"><b>PESO TOT KG:</b> 13,874.69</p>
+			<p class="border p-2 border-dark my-1"><b>Subtotal:</b> 13,997.49</p>
+			<p class="border p-2 border-dark my-1"><b>IGV (18%):</b> 2,519.55</p>
+			<p class="border p-2 border-dark my-1"><b>PERC.( %):</b> 0.00</p>
+			<p class="border p-2 border-dark my-1"><b>TOTAL USD:</b> 16,517.04</p>
+		</div>
+	</div>
+
 </body>
 
 </html>

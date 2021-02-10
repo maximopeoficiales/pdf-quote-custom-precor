@@ -160,7 +160,7 @@ if ( ! is_array( $columns ) ) {
 					<?php if ( in_array( 'all', $columns, true ) || in_array( 'product_subtotal', $columns, true ) ) : ?>
 						<?php ++$colspan; ?>
 						<td scope="col" class="last-col" style="text-align:right;  border-right: 1px solid #eee">
-							<?php echo wp_kses_post( apply_filters( 'ywraq_quote_subtotal_item', ywraq_formatted_line_total( $order, $item ), $item['line_total'], $_product ) ); ?>
+							<?php echo wp_kses_post( apply_filters( 'ywraq_quote_subtotal_item', zywraq_formatted_line_total( $order, $item ), $item['line_total'], $_product ) ); ?>
 						</td>
 					<?php endif ?>
 				</tr>
