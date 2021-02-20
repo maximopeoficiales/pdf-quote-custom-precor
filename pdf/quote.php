@@ -100,8 +100,8 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 			foreach ($data["line_items"] as $product) {
 				$cont += 10;
 				$pesoTotalKg += $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
-				$und = $product["und"] != null ? $product["und"] : "";
-				$undValue = $product["und_value"] != null ? doubleval($product["und_value"]) : "";
+				$und = $product["und"] != null ? round($product["und"], 2) : "";
+				$undValue = $product["und_value"] != null ? round(doubleval($product["und_value"]), 2) : "";
 				$pza = ($und != "" || $undValue != "") ? round($product["quantity"] / $undValue, 2) : "";
 
 				$pesoPiezaKg = round(0.5 * doubleval($product["quantity"]), 2);
