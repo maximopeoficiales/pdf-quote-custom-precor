@@ -26,10 +26,12 @@ class OrderCustom
             $und = null;
             $undValue = null;
             foreach ($product->get_meta_data() as $mt) {
-                if ($mt->key == "und" && $mt->value != "kg" && $mt->key != "") {
-                    $und = $mt->value;
+                if ($mt->key == "und") {
+                    if ($mt->value != "kg") {
+                        $und = $mt->value;
+                    }
                 }
-                if ($mt->key == "und_value" && $mt->key != "") {
+                if ($mt->key == "und_value") {
                     $undValue = $mt->value;
                 }
             }

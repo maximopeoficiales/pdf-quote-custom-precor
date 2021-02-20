@@ -117,7 +117,7 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 					<!-- nombre -->
 					<td class="text-8 text-left"><?= $product["name"] ?></td>
 					<!-- paquete / valor de paquete -->
-					<td class="text-8 text-center"><?= ($undValue != "" || $undValue != "") ? $und . "/" . $undValue : ""  ?></td>
+					<td class="text-8 text-center"><?= ($und != "" || $undValue != "") ? $und . "/" . $undValue : ""  ?></td>
 					<!-- piezas -->
 					<td class="text-8 text-right"><?= $pza == INF ? "" : $pza   ?></td>
 					<!-- pezo pieza kg -->
@@ -131,7 +131,7 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 					<td class="text-8 text-right"><?= $totalPesoPiezaKG   ?></td>
 				</tr>
 			<?php
-			} ?>
+			} ?>PZA
 		</tbody>
 	</table>
 
