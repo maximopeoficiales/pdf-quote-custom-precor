@@ -31,7 +31,6 @@ class OrderCustom
                 'subtotal'       => $item->get_subtotal(),
                 'subtotal_tax'    => $item->get_subtotal_tax(),
                 'total'       => $item->get_subtotal(),
-                'total'       => $item->get_subtotal_tax(),
                 'total_tax'       => $item->get_subtotal_tax(),
                 'meta_data'    => $product->get_meta_data(),
                 'sku'          => $product->get_sku(),

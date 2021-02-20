@@ -122,19 +122,20 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 		<div class="border border-dark text-uppercase float-right">
 			<p class=" p-2  "><b>PESO TOT KG:</b> 13,874.69</p>
 			<p class=" p-2 "><b>Subtotal:</b> <?= round($currentOrder->get_total() / 1.18, 2) ?></p>
-			<p class=" p-2  "><b>IGV (18%):</b> <?= round($currentOrder->get_total() / 0.18, 2) ?></p>
+			<p class=" p-2  "><b>IGV (18%):</b> <?= round($currentOrder->get_total() - round($currentOrder->get_total() / 1.18, 2), 2) ?></p>
 			<p class=" p-2 "><b>PERC.( %):</b> 0.00</p>
 			<p class=" p-2  "><b>TOTAL USD:</b> <?= $currentOrder->get_total() ?></p>
 		</div>
 		<div class="">
 			<div style="width: 70%;">
-				<p class="text-10">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+				<p class="text-10"><?= $currentOrder->get_customer_note() != "" ? $currentOrder->get_customer_note() : "Sin Observaciones"   ?>
 				<p>
 			</div>
 
 		</div>
 
 	</div>
+	<br><br>
 	<br><br>
 	<br><br><br><br>
 	<!-- inicio de condiciones -->
