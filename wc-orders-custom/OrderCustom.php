@@ -23,15 +23,26 @@ class OrderCustom
             $variation_id = $item->get_variation_id();
             $product_id   = $variation_id > 0 ? $variation_id : $item->get_product_id();
             // Set specific data for each item in the array
+            $und = null;
+            $undValue = null;
+            foreach ($product->get_meta_data() as $mt) {
+                if ($mt->key == "und" && $mt->value != "kg" && $mt->key != "") {
+                    $und = $mt->value;
+                }
+                if ($mt->key == "und_value" && $mt->key != "") {
+                    $undValue = $mt->value;
+                }
+            }
             $items_data[] = array(
                 'product_id'          => $product_id,
                 'variation_id' => $variation_id,
                 'name' => $item->get_name(),
-                'quantity'    => $item->get_quantity(),
+                'quantity'    => intval($item->get_quantity()),
                 'subtotal'       => $item->get_subtotal(),
-                'subtotal_tax'    => $item->get_subtotal_tax(),
-                'total'       => $item->get_subtotal(),
-                'total_tax'       => $item->get_subtotal_tax(),
+                'total'       => $item->get_total(),
+                'subtotal_tax'       => $item->get_subtotal_tax(),
+                'und'    => $und,
+                'und_value'    => $undValue,
                 'meta_data'    => $product->get_meta_data(),
                 'sku'          => $product->get_sku(),
                 'price'    => $product->get_price(),
@@ -118,6 +129,6 @@ class OrderCustom
             }
         }
         $results2 = $wpdb->get_results("SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE user_id=$user_id AND field_id=$idProfileExtraField");
-        return strval($results2[0]->user_value);
+        return $results2[0]->user_value != null ? strval($results2[0]->user_value) : null;
     }
 }

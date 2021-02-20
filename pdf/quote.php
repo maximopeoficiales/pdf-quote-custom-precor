@@ -60,15 +60,16 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 	<div>
 		<div class="p-2">
 			<img src="<?php echo esc_url($logo); ?>" class="rounded-lg" style="max-width: 150px;">
-			<div class="border text-uppercase float-right mb-2">
+			<div class=" text-uppercase float-right mb-2">
 				<p class=" p-2  my-1"><b>Cotizacion:</b> <?= $order_id ?></p>
 				<p class=" p-2  my-1"><b>Fecha:</b> <?= $data["date_created"] ?></p>
 			</div>
+			<br>
 		</div>
 
 	</div>
 	<div class="my-2 border text-uppercase text-sm p-2  border-dark">
-		<p class=""><b>CLIENTE:</b> <?= $data["customer_id_cli"] ?> <?= $currentOrder->get_billing_first_name() ?></p>
+		<p class=""><b>CLIENTE:</b> <?= $data["customer_id_cli"] != null ? $data["customer_id_cli"] : "N/A"   ?> <?= $currentOrder->get_billing_first_name() ?></p>
 		<p class=""><b>DIRECCION:</b> <?= $currentOrder->get_billing_address_1() ?></p>
 		<p class=""><b>TELEFONO:</b> <?= $currentOrder->get_billing_phone() ?></p>
 		<p class=""><b>ATENCION:</b> <?= $data["customer_nombeje"] ?></p>
@@ -87,7 +88,7 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 				</th>
 				<th class="text-8">P.LISTA USD</th>
 				<th class="text-8">VAL.VTA USD</th>
-				<th class="text-8">TOTAL USD</th>
+				<!-- <th class="text-8">TOTAL USD</th> -->
 				<th class="text-8">PESO.TOT KG</th>
 			</tr>
 		</thead>
@@ -95,21 +96,39 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 			<?php
 			// recorro los productos
 			$cont = 0;
+			$pesoTotalKg = 0;
 			foreach ($data["line_items"] as $product) {
 				$cont += 10;
+				$pesoTotalKg += $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
+				$und = $product["und"] != null ? $product["und"] : "";
+				$undValue = $product["und_value"] != null ? doubleval($product["und_value"]) : "";
+				$pza = ($und != "" || $undValue != "") ? round($product["quantity"] / $undValue, 2) : "";
+
+				$pesoPiezaKg = round(0.5 * doubleval($product["quantity"]), 2);
+				$totalPesoPiezaKG = $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
 			?>
 				<tr>
+					<!-- nitem -->
 					<td scope="row" class="text-8 text-center"><?php echo str_pad($cont, 4, "0", STR_PAD_LEFT); ?></td>
+					<!-- cantidad -->
 					<td class="text-8 text-center"><?= $product["quantity"] ?></td>
+					<!-- id_material -->
 					<td class="text-8 text-center"><?= $product["sku"] ?></td>
+					<!-- nombre -->
 					<td class="text-8 text-left"><?= $product["name"] ?></td>
-					<td class="text-8 text-center">PAQ</td>
-					<td class="text-8 text-right">2,688</td>
-					<td class="text-8 text-right">12.63</td>
-					<td class="text-8 text-right">2.49</td>
-					<td class="text-8 text-right">1.57</td>
-					<td class="text-8 text-right"><?= $product["subtotal"] ?></td>
-					<td class="text-8 text-right">4,244.35</td>
+					<!-- paquete / valor de paquete -->
+					<td class="text-8 text-center"><?= ($undValue != "" || $undValue != "") ? $und . "/" . $undValue : ""  ?></td>
+					<!-- piezas -->
+					<td class="text-8 text-right"><?= $pza == INF ? "" : $pza   ?></td>
+					<!-- pezo pieza kg -->
+					<td class="text-8 text-right"><?= $pesoPiezaKg  ?></td>
+					<!-- precio del producto -->
+					<td class="text-8 text-right"><?= $product["price"] ?></td>
+					<!-- precio con descuento -->
+					<td class="text-8 text-right"><?= $product["total"] ?></td>
+					<!-- <td class="text-8 text-right"></td> -->
+					<!-- total de kg del producto -->
+					<td class="text-8 text-right"><?= $totalPesoPiezaKG   ?></td>
 				</tr>
 			<?php
 			} ?>
@@ -120,7 +139,7 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 		<!-- ejemplo de simulacion de flex -->
 		<h6 class="text-bold">Observaciones:</h6>
 		<div class="border border-dark text-uppercase float-right">
-			<p class=" p-2  "><b>PESO TOT KG:</b> 13,874.69</p>
+			<p class=" p-2  "><b>PESO TOT KG:</b> <?= round($pesoTotalKg, 2) ?></p>
 			<p class=" p-2 "><b>Subtotal:</b> <?= round($currentOrder->get_total() / 1.18, 2) ?></p>
 			<p class=" p-2  "><b>IGV (18%):</b> <?= round($currentOrder->get_total() - round($currentOrder->get_total() / 1.18, 2), 2) ?></p>
 			<p class=" p-2 "><b>PERC.( %):</b> 0.00</p>
