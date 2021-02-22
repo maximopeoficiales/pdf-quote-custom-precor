@@ -131,7 +131,7 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 					<td class="text-8 text-right"><?= $totalPesoPiezaKG   ?></td>
 				</tr>
 				<?php
-			} ?>PZA
+			} ?>
 		</tbody>
 	</table>
 
