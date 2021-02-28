@@ -59,9 +59,9 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 <body>
 	<div>
 		<div class="p-2">
-			<img src="<?php echo esc_url($logo); ?>" class="rounded-lg" style="max-width: 150px;">
+			<img src="http://tiendaenlinea.precor.pe/wp-content/uploads/2020/07/LOGO-PRECOR-SIN-PMP.jpg" class="rounded-lg" style="max-width: 150px;">
 			<div class=" text-uppercase float-right mb-2">
-				<p class=" p-2  my-1"><b>Cotizacion:</b> <?= $order_id ?></p>
+				<p class=" p-2  my-1"><b>Cotizacion:</b> <?= $this->order_id ?></p>
 				<p class=" p-2  my-1"><b>Fecha:</b> <?= $data["date_created"] ?></p>
 			</div>
 			<br>
@@ -69,8 +69,10 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 
 	</div>
 	<div class="my-2 border text-uppercase text-sm p-2  border-dark">
-		<p class=""><b>CLIENTE:</b> <?= $data["customer_id_cli"] != null ? $data["customer_id_cli"] : "N/A"   ?> <?= $currentOrder->get_billing_first_name() ?></p>
-		<p class=""><b>DIRECCION:</b> <?= $currentOrder->get_billing_address_1() ?></p>
+		<p class=""><b>CLIENTE:</b> <?= $data["customer_id_cli"] != null
+     ? $data["customer_id_cli"]
+     : "N/A" ?> <?= $currentOrder->get_billing_first_name() ?></p>
+		<p class=""><b>DIRECCION:</b> <?= $data["customer_drcfisc"] ?></p>
 		<p class=""><b>TELEFONO:</b> <?= $currentOrder->get_billing_phone() ?></p>
 		<p class=""><b>ATENCION:</b> <?= $data["customer_nombeje"] ?></p>
 	</div>
@@ -94,22 +96,36 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 		</thead>
 		<tbody class="text-8">
 			<?php
-			// recorro los productos
-			$cont = 0;
-			$pesoTotalKg = 0;
-			foreach ($data["line_items"] as $product) {
-				$cont += 10;
-				$pesoTotalKg += $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
-				$und = $product["und"] != null ? $product["und"] : "";
-				$undValue = $product["und_value"] != null ? round(doubleval($product["und_value"]), 2) : "";
-				$pza = ($und != "" || $undValue != "") ? round($product["quantity"] / $undValue, 2) : "";
+   // recorro los productos
+   $cont = 0;
+   $pesoTotalKg = 0;
+   foreach ($data["line_items"] as $product) {
 
-				$pesoPiezaKg = round(0.5 * doubleval($product["quantity"]), 2);
-				$totalPesoPiezaKG = $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
-			?>
+      $cont += 10;
+      $pesoTotalKg +=
+         $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
+      $und = $product["und"] != null ? $product["und"] : "";
+      $undValue =
+         $product["und_value"] != null
+            ? round(doubleval($product["und_value"]), 2)
+            : "";
+      $pza =
+         $und != "" || $undValue != ""
+            ? round($product["quantity"] / $undValue, 2)
+            : "";
+
+      $pesoPiezaKg = round(0.5 * doubleval($product["quantity"]), 2);
+      $totalPesoPiezaKG =
+         $product["quantity"] * round(0.5 * doubleval($product["quantity"]), 2);
+      ?>
 				<tr>
 					<!-- nitem -->
-					<td scope="row" class="text-8 text-center"><?php echo str_pad($cont, 4, "0", STR_PAD_LEFT); ?></td>
+					<td scope="row" class="text-8 text-center"><?php echo str_pad(
+        $cont,
+        4,
+        "0",
+        STR_PAD_LEFT
+     ); ?></td>
 					<!-- cantidad -->
 					<td class="text-8 text-center"><?= $product["quantity"] ?></td>
 					<!-- id_material -->
@@ -117,21 +133,24 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 					<!-- nombre -->
 					<td class="text-8 text-left"><?= $product["name"] ?></td>
 					<!-- paquete / valor de paquete -->
-					<td class="text-8 text-center"><?= ($und != "" || $undValue != "") ? $und . "/" . $undValue : ""  ?></td>
+					<td class="text-8 text-center"><?= $und != "" || $undValue != ""
+        ? $und . "/" . $undValue
+        : "" ?></td>
 					<!-- piezas -->
-					<td class="text-8 text-right"><?= $pza == INF ? "" : $pza   ?></td>
+					<td class="text-8 text-right"><?= $pza == INF ? "" : $pza ?></td>
 					<!-- pezo pieza kg -->
-					<td class="text-8 text-right"><?= $pesoPiezaKg  ?></td>
+					<td class="text-8 text-right"><?= $pesoPiezaKg ?></td>
 					<!-- precio del producto -->
 					<td class="text-8 text-right"><?= $product["price"] ?></td>
 					<!-- precio con descuento -->
 					<td class="text-8 text-right"><?= $product["total"] ?></td>
 					<!-- <td class="text-8 text-right"></td> -->
 					<!-- total de kg del producto -->
-					<td class="text-8 text-right"><?= $totalPesoPiezaKG   ?></td>
+					<td class="text-8 text-right"><?= $totalPesoPiezaKG ?></td>
 				</tr>
-				<?php
-			} ?>
+			<?php
+   }
+   ?>
 		</tbody>
 	</table>
 
@@ -140,14 +159,22 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 		<h6 class="text-bold">Observaciones:</h6>
 		<div class="border border-dark text-uppercase float-right">
 			<p class=" p-2  "><b>PESO TOT KG:</b> <?= round($pesoTotalKg, 2) ?></p>
-			<p class=" p-2 "><b>Subtotal:</b> <?= round($currentOrder->get_total() / 1.18, 2) ?></p>
-			<p class=" p-2  "><b>IGV (18%):</b> <?= round($currentOrder->get_total() - round($currentOrder->get_total() / 1.18, 2), 2) ?></p>
+			<p class=" p-2 "><b>Subtotal:</b> <?= round(
+      $currentOrder->get_total() / 1.18,
+      2
+   ) ?></p>
+			<p class=" p-2  "><b>IGV (18%):</b> <?= round(
+      $currentOrder->get_total() - round($currentOrder->get_total() / 1.18, 2),
+      2
+   ) ?></p>
 			<p class=" p-2 "><b>PERC.( %):</b> 0.00</p>
 			<p class=" p-2  "><b>TOTAL USD:</b> <?= $currentOrder->get_total() ?></p>
 		</div>
 		<div class="">
 			<div style="width: 70%;">
-				<p class="text-10"><?= $currentOrder->get_customer_note() != "" ? $currentOrder->get_customer_note() : "Sin Observaciones"   ?>
+				<p class="text-10"><?= $currentOrder->get_customer_note() != ""
+       ? $currentOrder->get_customer_note()
+       : "Sin Observaciones" ?>
 				<p>
 			</div>
 
@@ -218,6 +245,7 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 			<p class="p-2 border text-center text-9"><b>DESPACHO/LOCAL DEL CLIENTE/DESESTIBA A CARGO DE PRECOR/COLOCAR EN RACKS</b></p>
 		</div>
 		<p class="my-1">Precor entrega el material en el lugar de destino acordado por el Cliente:</p>
+<p class="text-center border p-2 font-weight-bold" style="font-size: 12px ;border-style: dashed;"><?= $currentOrder->get_billing_address_1() ?></p>
 		<div class="my-2 w-100 text-9">
 			<div class="py-2 pl-5">
 				<ol>
@@ -282,8 +310,10 @@ $logo = $logo_attachment_id ? get_attached_file($logo_attachment_id) : $logo_url
 	</div>
 	<!-- fin de condiciones -->
 	<div class="my-2 float-left">
-		<p>VIVIANA ALARCON AQUIJE</p>
-		<p>7054000 ext. 2102</p>
+   <p><?= $data["customer_nombeje"] ?></p>
+ <p><?= $data["customer_telfeje"] ?></p>
+ <p><?= $data["customer_emaileje"] ?></p>
+
 		<p>Av. Manuel Olguin 373, Edificio Qubo</p>
 		<p>Piso 9, Surco, Lima</p>
 		<p>Telf.: (511) 705-4000</p>
